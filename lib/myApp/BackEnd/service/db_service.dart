@@ -1,12 +1,13 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
-import 'package:stock_management/myApp/BackEnd/table/category.dart';
-import 'package:stock_management/myApp/BackEnd/table/payment.dart';
-import 'package:stock_management/myApp/BackEnd/table/product.dart';
-import 'package:stock_management/myApp/BackEnd/table/transaction.dart';
-import 'package:stock_management/myApp/BackEnd/table/transaction_item.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path_provider/path_provider.dart';
+import 'package:pos_app/myApp/BackEnd/table/category.dart';
+import 'package:pos_app/myApp/BackEnd/table/payment.dart';
+import 'package:pos_app/myApp/BackEnd/table/product.dart';
+import 'package:pos_app/myApp/BackEnd/table/transaction.dart';
+import 'package:pos_app/myApp/BackEnd/table/transaction_item.dart';
+import 'package:pos_app/myApp/BackEnd/utils/utils.dart';
 
 part 'db_service.g.dart';
 

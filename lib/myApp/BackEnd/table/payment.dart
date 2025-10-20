@@ -5,4 +5,5 @@ class Payment extends Table{
   String get tableName => 'payment';
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }

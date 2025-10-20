@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:pos_app/myApp/BackEnd/service/db_service.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Get.put(()=> DbService(), permanent: true);
   runApp(const MainApp());
 }
 
