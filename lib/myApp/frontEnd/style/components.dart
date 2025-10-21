@@ -3,9 +3,67 @@ import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
 
 class Components {
+  static Widget textContentSmall(String text) {
+    return Text(text,
+        style: const TextStyle(fontSize: 14, color: Colors.black));
+  }
+
+  static Widget textContentMedium(String text) {
+    return Text(text,
+        style: const TextStyle(fontSize: 18, color: Colors.black));
+  }
+
+  static Widget textContentLarge(String text) {
+    return Text(text,
+        style: const TextStyle(fontSize: 22, color: Colors.black));
+  }
+
+  static Widget textHeadlineSmall(String text) {
+    return Text(text,
+        style: const TextStyle(
+            fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold));
+  }
+
+  static Widget textHeadlineMedium(String text) {
+    return Text(text,
+        style: const TextStyle(
+            fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold));
+  }
+
+  static Widget textHeadlineLarge(String text) {
+    return Text(text,
+        style: const TextStyle(
+            fontSize: 22, color: Colors.black, fontWeight: FontWeight.bold));
+  }
+
+  static Widget textLightSmall(String text) {
+    return Text(text,
+        style: const TextStyle(
+            fontSize: 14,
+            color: Color.fromARGB(255, 86, 86, 86),
+            fontWeight: FontWeight.w300));
+  }
+
+  static Widget textLightMedium(String text) {
+    return Text(text,
+        style: const TextStyle(
+            fontSize: 18,
+            color: Color.fromARGB(255, 86, 86, 86),
+            fontWeight: FontWeight.w300));
+  }
+
+  static Widget textLightLarge(String text) {
+    return Text(text,
+        style: const TextStyle(
+            fontSize: 22,
+            color: Color.fromARGB(255, 86, 86, 86),
+            fontWeight: FontWeight.w300));
+  }
+
   static Widget myButton(
     String text,
     VoidCallback onPressed, {
+    Color? textColor,
     Color? color,
     GFButtonType type = GFButtonType.solid,
     double borderRadius = 8,
@@ -15,7 +73,7 @@ class Components {
       text: text,
       color: color ?? Colors.indigo,
       textStyle: Theme.of(Get.context!).textTheme.bodySmall?.copyWith(
-            color: Colors.white,
+            color: textColor ?? Colors.white,
             fontWeight: FontWeight.w600,
           ),
       borderShape: RoundedRectangleBorder(
@@ -68,7 +126,8 @@ class Components {
                   ? iconColors[index]
                   : Colors.grey[700],
             ),
-            onPressed: onIconPressed[index],
+            onPressed:
+                onIconPressed.length > index ? onIconPressed[index] : null,
             type: GFButtonType.transparent,
           ),
         ),
@@ -155,10 +214,11 @@ class Components {
     IconData? prefixIcon,
     IconData? suffixIcon,
     Color? fillColor,
+    double? width, // optional fixed width
   }) {
     final RxBool obscure = isPassword.obs;
 
-    return Obx(
+    Widget textField = Obx(
       () => GFTextField(
         controller: controller,
         keyboardType: keyboardType,
@@ -169,24 +229,32 @@ class Components {
           filled: true,
           fillColor: fillColor ?? Colors.grey[100],
           prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
-          suffixIcon: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (isPassword)
-                IconButton(
-                  icon: Icon(
-                    obscure.value ? Icons.visibility_off : Icons.visibility,
+          suffixIconConstraints: const BoxConstraints(
+            minWidth: 0,
+            minHeight: 0,
+          ),
+          suffixIcon: SizedBox(
+            width: 48, // batasi lebar icon
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isPassword)
+                  IconButton(
+                    icon: Icon(
+                      obscure.value ? Icons.visibility_off : Icons.visibility,
+                      size: 20,
+                    ),
+                    onPressed: () => obscure.value = !obscure.value,
                   ),
-                  onPressed: () => obscure.value = !obscure.value,
-                ),
-              if (isSearch)
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: onSearch,
-                ),
-              if (!isSearch && !isPassword && suffixIcon != null)
-                Icon(suffixIcon),
-            ],
+                if (isSearch)
+                  IconButton(
+                    icon: const Icon(Icons.search, size: 20),
+                    onPressed: onSearch,
+                  ),
+                if (!isSearch && !isPassword && suffixIcon != null)
+                  Icon(suffixIcon, size: 20),
+              ],
+            ),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
@@ -195,6 +263,23 @@ class Components {
         onChanged: onChanged,
         validatornew: validator,
       ),
+    );
+
+    if (width != null) {
+      return SizedBox(width: width, child: textField);
+    }
+    return textField;
+  }
+
+  static Widget textfield({required String hintText, required TextEditingController controller, ValueChanged<String>? onChanged}) {
+    return GFTextField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: hintText,
+        labelText: hintText,
+        border: OutlineInputBorder(),
+      ),
+      onChanged: onChanged,
     );
   }
 }
