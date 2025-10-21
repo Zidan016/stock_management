@@ -5,6 +5,11 @@ class MasterController extends GetxController{
     Get.toNamed('/category');
   }
 
-  void toPayment(){}
-  void toProduct(){}
+  void toPayment(){
+    Get.toNamed('/payment');
+  }
+  
+  void toProduct(){
+    Get.toNamed('/product');
+  }
 }

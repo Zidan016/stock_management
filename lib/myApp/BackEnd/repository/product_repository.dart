@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:pos_app/myApp/BackEnd/models/product_category.dart';
 import 'package:pos_app/myApp/BackEnd/service/db_service.dart';
 import 'package:drift/drift.dart' as drift;
 
@@ -14,25 +13,11 @@ class ProductRepository {
         .get();
     final category = await db.select(db.category).get();
 
-    final result = product.map((itm) {
-      final categories = category.firstWhereOrNull(
-        (cat) => cat.id == itm.categoryId,
-      );
-
-      return ProductCategory(
-          product: itm,
-          category: categories ??
-              CategoryData(
-                  id: 0,
-                  name: 'Tidak ada Kategori',
-                  createdAt: DateTime.now()));
-    }).toList();
-
-    return result;
+    return {'product': product, 'category': category};
   }
 
-  Future createProduct(String nama, double harga, String? description,
-      int? categpryId, int stock) async {
+  Future createProduct({required String nama, required double harga, String? description,
+      int? categpryId, required int stock}) async {
     try {
       await db.into(db.product).insert(ProductCompanion.insert(
           nama: nama,

@@ -24,7 +24,7 @@ class MasterView extends GetView<MasterController> {
                   child: _buildMenuCard(
                       icon: Icons.all_inbox_rounded,
                       label: 'Produk',
-                      onTap: () {}),
+                      onTap: () {controller.toProduct();}),
                 ),
               ],
             ),
@@ -35,7 +35,7 @@ class MasterView extends GetView<MasterController> {
                   child: _buildMenuCard(
                       icon: Icons.payment,
                       label: 'Pembayaran',
-                      onTap: () {}),
+                      onTap: () {controller.toPayment();}),
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -60,7 +60,7 @@ class MasterView extends GetView<MasterController> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          color: const Color.fromARGB(255, 189, 189, 189),
+          color: const Color.fromARGB(255, 220, 220, 220),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(

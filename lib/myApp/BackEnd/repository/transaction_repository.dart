@@ -23,7 +23,7 @@ class TransactionRepository {
           .insert(TransactionsCompanion.insert(id: drift.Value(id)));
       final data = await (db.select(db.transactions)
             ..where((tbl) => tbl.id.equals(id)))
-          .get();
+          .getSingle();
       return data;
     } catch (e) {
       print(e);

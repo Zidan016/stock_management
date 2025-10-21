@@ -1,29 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pos_app/myApp/BackEnd/repository/category_repository.dart';
+import 'package:pos_app/myApp/BackEnd/repository/payment_repository.dart';
 import 'package:pos_app/myApp/BackEnd/service/db_service.dart';
 import 'package:pos_app/myApp/frontEnd/style/app_theme.dart';
 import 'package:pos_app/myApp/frontEnd/style/components.dart';
 
-class CategoryController extends GetxController {
-  final categoryRep = Get.find<CategoryRepository>();
-  final listCategory = <CategoryData>[].obs;
-  final mCategory = Rxn<CategoryData>();
+class PaymentController extends GetxController{
+  final paymentRep = Get.find<PaymentRepository>();
+  final listPayment = <PaymentData>[].obs;
 
-  void loadAllCategory() async {
-    final data = await categoryRep.loadCatageory();
-    listCategory.assignAll(data);
+  void loadAll() async {
+    final data = await paymentRep.loadAll();
+    listPayment.assignAll(data);
   }
 
-  void popUpCategory(CategoryData? data) {
+  void popUpCategory(PaymentData? data) {
     final nameController = TextEditingController(text: data?.name ?? '');
 
     Get.defaultDialog(
-      title: data == null ? "Buat Kategori" : "Edit Kategori",
+      title: data == null ? "Buat Payment" : "Edit Payment",
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Components.myTextField(controller: nameController, label: 'Kategori'),
+          Components.myTextField(controller: nameController, label: 'Payment'),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -35,13 +34,13 @@ class CategoryController extends GetxController {
                     if (name.isEmpty) return;
 
                     if (data == null) {
-                      await categoryRep.addCategory(name);
+                      await paymentRep.create(name);
                     } else {
                       final newData = data.copyWith(name: name);
-                      await categoryRep.editCategory(newData);
+                      await paymentRep.update(newData);
                     }
 
-                    loadAllCategory();
+                    loadAll();
                     Get.back();
                   },
                   color: Colors.indigoAccent,
@@ -64,8 +63,8 @@ class CategoryController extends GetxController {
                   child: Components.myButton(
                     'Hapus',
                     () async {
-                      await categoryRep.deleteCategoru(data.id);
-                      loadAllCategory();
+                      await paymentRep.delete(data.id);
+                      loadAll();
                       Get.back();
                     },
                     color: AppTheme.secondaryRed,

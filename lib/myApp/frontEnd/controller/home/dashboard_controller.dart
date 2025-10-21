@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:pos_app/myApp/BackEnd/reposeitory/transaction_repository.dart';
+import 'package:pos_app/myApp/BackEnd/repository/transaction_repository.dart';
 import 'package:pos_app/myApp/BackEnd/service/db_service.dart';
 
 class DashboardController extends GetxController{
