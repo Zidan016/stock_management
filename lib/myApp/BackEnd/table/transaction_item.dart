@@ -12,6 +12,7 @@ class TransactionItem extends Table{
   IntColumn get qty => integer().withDefault(const Constant(1))();
   RealColumn get price => real().withDefault(const Constant(0))();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+
   @override
   Set<Column> get primaryKey => {id};
 }

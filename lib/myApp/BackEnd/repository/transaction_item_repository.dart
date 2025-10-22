@@ -13,9 +13,14 @@ class TransactionItemRepository {
           )
           ..orderBy([(t) => drift.OrderingTerm.desc(t.createdAt)]))
         .get();
-    final productIds = transactionItem.map((i) => i.productId).toSet();
+
+    final productIds = transactionItem
+        .map((i) => i.productId)
+        .whereType<String>() 
+        .toSet();
+
     final products = await (db.select(db.product)
-          ..where((tbl) => tbl.id.isIn(productIds as Iterable<String>)))
+          ..where((tbl) => tbl.id.isIn(productIds)))
         .get();
 
     final result = transactionItem.map((item) {
@@ -24,7 +29,7 @@ class TransactionItemRepository {
               id: "-",
               nama: 'Produk tidak ditemukan / Produk Telah Terhapus',
               harga: 0,
-              description: null,
+              description: 'Produk telah dihapus',
               categoryId: null,
               createdAt: DateTime.now(),
               stock: 0));

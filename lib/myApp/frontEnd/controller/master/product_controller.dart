@@ -84,7 +84,7 @@ class ProductController extends GetxController {
                       value: listCategory
                               .any((cat) => cat.id == categoryId.value)
                           ? categoryId.value
-                          : null, // <--- tambahkan validasi ini
+                          : null,
                       items: listCategory.map((cat) {
                         return DropdownMenuItem<int>(
                           value: cat.id,

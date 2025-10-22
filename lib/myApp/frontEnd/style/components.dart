@@ -211,67 +211,71 @@ class Components {
     String? Function(String?)? validator,
     ValueChanged<String>? onChanged,
     VoidCallback? onSearch,
+    VoidCallback? onEditingCompleted,
     IconData? prefixIcon,
     IconData? suffixIcon,
+    VoidCallback? onIconPressed, // 👈 tetap ada
     Color? fillColor,
-    double? width, // optional fixed width
+    double? width,
   }) {
     final RxBool obscure = isPassword.obs;
 
-    Widget textField = Obx(
-      () => GFTextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        obscureText: obscure.value,
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: hint,
-          filled: true,
-          fillColor: fillColor ?? Colors.grey[100],
-          prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
-          suffixIconConstraints: const BoxConstraints(
-            minWidth: 0,
-            minHeight: 0,
-          ),
-          suffixIcon: SizedBox(
-            width: 48, // batasi lebar icon
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (isPassword)
-                  IconButton(
-                    icon: Icon(
-                      obscure.value ? Icons.visibility_off : Icons.visibility,
-                      size: 20,
-                    ),
-                    onPressed: () => obscure.value = !obscure.value,
-                  ),
-                if (isSearch)
-                  IconButton(
-                    icon: const Icon(Icons.search, size: 20),
-                    onPressed: onSearch,
-                  ),
-                if (!isSearch && !isPassword && suffixIcon != null)
-                  Icon(suffixIcon, size: 20),
-              ],
+    Widget field = Obx(
+      () => Stack(
+        alignment: Alignment.centerRight,
+        children: [
+          GFTextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            obscureText: obscure.value,
+            decoration: InputDecoration(
+              labelText: label,
+              hintText: hint,
+              filled: true,
+              fillColor: fillColor ?? Colors.grey[100],
+              prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
+              suffixIcon: isPassword
+                  ? IconButton(
+                      icon: Icon(
+                        obscure.value ? Icons.visibility_off : Icons.visibility,
+                        size: 20,
+                      ),
+                      onPressed: () => obscure.value = !obscure.value,
+                    )
+                  : (isSearch
+                      ? IconButton(
+                          icon: const Icon(Icons.search, size: 20),
+                          onPressed: onSearch,
+                        )
+                      : null),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
+            onChanged: onChanged,
+            validatornew: validator,
+            onEditingComplete: onEditingCompleted,
           ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-        onChanged: onChanged,
-        validatornew: validator,
+
+          if (suffixIcon != null)
+            Positioned(
+              right: 8,
+              child: IconButton(
+                icon: Icon(suffixIcon, size: 22),
+                onPressed: onIconPressed,
+              ),
+            ),
+        ],
       ),
     );
 
-    if (width != null) {
-      return SizedBox(width: width, child: textField);
-    }
-    return textField;
+    return width != null ? SizedBox(width: width, child: field) : field;
   }
 
-  static Widget textfield({required String hintText, required TextEditingController controller, ValueChanged<String>? onChanged}) {
+  static Widget textfield(
+      {required String hintText,
+      required TextEditingController controller,
+      ValueChanged<String>? onChanged}) {
     return GFTextField(
       controller: controller,
       decoration: InputDecoration(

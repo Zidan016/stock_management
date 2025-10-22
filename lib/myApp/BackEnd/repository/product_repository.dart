@@ -62,4 +62,9 @@ class ProductRepository {
       return false;
     }
   }
+
+  Future byId(String id)async{
+    final data = await (db.select(db.product)..where((tbl)=> tbl.id.equals(id))).getSingle();
+    return data;
+  }
 }

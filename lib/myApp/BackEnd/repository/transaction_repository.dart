@@ -34,8 +34,10 @@ class TransactionRepository {
   Future byId(String id) async {
     final data = await (db.select(db.transactions)
           ..where((tbl) => tbl.id.equals(id)))
-        .get();
-    return data;
+        .getSingle();
+    final product = await (db.select(db.product)..orderBy([(it)=> drift.OrderingTerm.desc(it.createdAt)])).get();
+    final payment = await (db.select(db.payment)..orderBy([(it)=> drift.OrderingTerm.desc(it.createdAt)])).get();
+    return {"transaction":data, "product": product, "payment": payment};
   }
 
   Future update(Transaction data) async {

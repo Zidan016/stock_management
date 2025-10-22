@@ -1339,9 +1339,17 @@ class $TransactionItemTable extends TransactionItem
       type: DriftSqlType.double,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime,
+      requiredDuringInsert: false,
+      defaultValue: currentDateAndTime);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, productId, transactionId, qty, price];
+      [id, productId, transactionId, qty, price, createdAt];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1374,6 +1382,10 @@ class $TransactionItemTable extends TransactionItem
       context.handle(
           _priceMeta, price.isAcceptableOrUnknown(data['price']!, _priceMeta));
     }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    }
     return context;
   }
 
@@ -1393,6 +1405,8 @@ class $TransactionItemTable extends TransactionItem
           .read(DriftSqlType.int, data['${effectivePrefix}qty'])!,
       price: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}price'])!,
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
     );
   }
 
@@ -1409,12 +1423,14 @@ class TransactionItemData extends DataClass
   final String? transactionId;
   final int qty;
   final double price;
+  final DateTime createdAt;
   const TransactionItemData(
       {required this.id,
       this.productId,
       this.transactionId,
       required this.qty,
-      required this.price});
+      required this.price,
+      required this.createdAt});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1427,6 +1443,7 @@ class TransactionItemData extends DataClass
     }
     map['qty'] = Variable<int>(qty);
     map['price'] = Variable<double>(price);
+    map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
 
@@ -1441,6 +1458,7 @@ class TransactionItemData extends DataClass
           : Value(transactionId),
       qty: Value(qty),
       price: Value(price),
+      createdAt: Value(createdAt),
     );
   }
 
@@ -1453,6 +1471,7 @@ class TransactionItemData extends DataClass
       transactionId: serializer.fromJson<String?>(json['transactionId']),
       qty: serializer.fromJson<int>(json['qty']),
       price: serializer.fromJson<double>(json['price']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
   @override
@@ -1464,6 +1483,7 @@ class TransactionItemData extends DataClass
       'transactionId': serializer.toJson<String?>(transactionId),
       'qty': serializer.toJson<int>(qty),
       'price': serializer.toJson<double>(price),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
 
@@ -1472,7 +1492,8 @@ class TransactionItemData extends DataClass
           Value<String?> productId = const Value.absent(),
           Value<String?> transactionId = const Value.absent(),
           int? qty,
-          double? price}) =>
+          double? price,
+          DateTime? createdAt}) =>
       TransactionItemData(
         id: id ?? this.id,
         productId: productId.present ? productId.value : this.productId,
@@ -1480,6 +1501,7 @@ class TransactionItemData extends DataClass
             transactionId.present ? transactionId.value : this.transactionId,
         qty: qty ?? this.qty,
         price: price ?? this.price,
+        createdAt: createdAt ?? this.createdAt,
       );
   TransactionItemData copyWithCompanion(TransactionItemCompanion data) {
     return TransactionItemData(
@@ -1490,6 +1512,7 @@ class TransactionItemData extends DataClass
           : this.transactionId,
       qty: data.qty.present ? data.qty.value : this.qty,
       price: data.price.present ? data.price.value : this.price,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
 
@@ -1500,13 +1523,15 @@ class TransactionItemData extends DataClass
           ..write('productId: $productId, ')
           ..write('transactionId: $transactionId, ')
           ..write('qty: $qty, ')
-          ..write('price: $price')
+          ..write('price: $price, ')
+          ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, productId, transactionId, qty, price);
+  int get hashCode =>
+      Object.hash(id, productId, transactionId, qty, price, createdAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1515,7 +1540,8 @@ class TransactionItemData extends DataClass
           other.productId == this.productId &&
           other.transactionId == this.transactionId &&
           other.qty == this.qty &&
-          other.price == this.price);
+          other.price == this.price &&
+          other.createdAt == this.createdAt);
 }
 
 class TransactionItemCompanion extends UpdateCompanion<TransactionItemData> {
@@ -1524,6 +1550,7 @@ class TransactionItemCompanion extends UpdateCompanion<TransactionItemData> {
   final Value<String?> transactionId;
   final Value<int> qty;
   final Value<double> price;
+  final Value<DateTime> createdAt;
   final Value<int> rowid;
   const TransactionItemCompanion({
     this.id = const Value.absent(),
@@ -1531,6 +1558,7 @@ class TransactionItemCompanion extends UpdateCompanion<TransactionItemData> {
     this.transactionId = const Value.absent(),
     this.qty = const Value.absent(),
     this.price = const Value.absent(),
+    this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   TransactionItemCompanion.insert({
@@ -1539,6 +1567,7 @@ class TransactionItemCompanion extends UpdateCompanion<TransactionItemData> {
     this.transactionId = const Value.absent(),
     this.qty = const Value.absent(),
     this.price = const Value.absent(),
+    this.createdAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   static Insertable<TransactionItemData> custom({
@@ -1547,6 +1576,7 @@ class TransactionItemCompanion extends UpdateCompanion<TransactionItemData> {
     Expression<String>? transactionId,
     Expression<int>? qty,
     Expression<double>? price,
+    Expression<DateTime>? createdAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -1555,6 +1585,7 @@ class TransactionItemCompanion extends UpdateCompanion<TransactionItemData> {
       if (transactionId != null) 'transaction_id': transactionId,
       if (qty != null) 'qty': qty,
       if (price != null) 'price': price,
+      if (createdAt != null) 'created_at': createdAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1565,6 +1596,7 @@ class TransactionItemCompanion extends UpdateCompanion<TransactionItemData> {
       Value<String?>? transactionId,
       Value<int>? qty,
       Value<double>? price,
+      Value<DateTime>? createdAt,
       Value<int>? rowid}) {
     return TransactionItemCompanion(
       id: id ?? this.id,
@@ -1572,6 +1604,7 @@ class TransactionItemCompanion extends UpdateCompanion<TransactionItemData> {
       transactionId: transactionId ?? this.transactionId,
       qty: qty ?? this.qty,
       price: price ?? this.price,
+      createdAt: createdAt ?? this.createdAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1594,6 +1627,9 @@ class TransactionItemCompanion extends UpdateCompanion<TransactionItemData> {
     if (price.present) {
       map['price'] = Variable<double>(price.value);
     }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1608,6 +1644,7 @@ class TransactionItemCompanion extends UpdateCompanion<TransactionItemData> {
           ..write('transactionId: $transactionId, ')
           ..write('qty: $qty, ')
           ..write('price: $price, ')
+          ..write('createdAt: $createdAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2855,6 +2892,7 @@ typedef $$TransactionItemTableCreateCompanionBuilder = TransactionItemCompanion
   Value<String?> transactionId,
   Value<int> qty,
   Value<double> price,
+  Value<DateTime> createdAt,
   Value<int> rowid,
 });
 typedef $$TransactionItemTableUpdateCompanionBuilder = TransactionItemCompanion
@@ -2864,6 +2902,7 @@ typedef $$TransactionItemTableUpdateCompanionBuilder = TransactionItemCompanion
   Value<String?> transactionId,
   Value<int> qty,
   Value<double> price,
+  Value<DateTime> createdAt,
   Value<int> rowid,
 });
 
@@ -2920,6 +2959,9 @@ class $$TransactionItemTableFilterComposer
 
   ColumnFilters<double> get price => $composableBuilder(
       column: $table.price, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
 
   $$ProductTableFilterComposer get productId {
     final $$ProductTableFilterComposer composer = $composerBuilder(
@@ -2980,6 +3022,9 @@ class $$TransactionItemTableOrderingComposer
   ColumnOrderings<double> get price => $composableBuilder(
       column: $table.price, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
   $$ProductTableOrderingComposer get productId {
     final $$ProductTableOrderingComposer composer = $composerBuilder(
         composer: this,
@@ -3038,6 +3083,9 @@ class $$TransactionItemTableAnnotationComposer
 
   GeneratedColumn<double> get price =>
       $composableBuilder(column: $table.price, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
 
   $$ProductTableAnnotationComposer get productId {
     final $$ProductTableAnnotationComposer composer = $composerBuilder(
@@ -3109,6 +3157,7 @@ class $$TransactionItemTableTableManager extends RootTableManager<
             Value<String?> transactionId = const Value.absent(),
             Value<int> qty = const Value.absent(),
             Value<double> price = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               TransactionItemCompanion(
@@ -3117,6 +3166,7 @@ class $$TransactionItemTableTableManager extends RootTableManager<
             transactionId: transactionId,
             qty: qty,
             price: price,
+            createdAt: createdAt,
             rowid: rowid,
           ),
           createCompanionCallback: ({
@@ -3125,6 +3175,7 @@ class $$TransactionItemTableTableManager extends RootTableManager<
             Value<String?> transactionId = const Value.absent(),
             Value<int> qty = const Value.absent(),
             Value<double> price = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               TransactionItemCompanion.insert(
@@ -3133,6 +3184,7 @@ class $$TransactionItemTableTableManager extends RootTableManager<
             transactionId: transactionId,
             qty: qty,
             price: price,
+            createdAt: createdAt,
             rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
