@@ -18,7 +18,7 @@ class TransactionDetailController extends GetxController {
   ReceiptController? _receiptController;
   Widget? _receiptWidget;
 
-  void loadAll()async{
+  void loadAll() async {
     Transaction model = Get.arguments;
     mTransaction.value = model;
 
@@ -66,58 +66,114 @@ class TransactionDetailController extends GetxController {
   }
 
   Widget buildReceiptWidget() {
-    _receiptWidget = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Center(
-            child: Text(namaToko.value.text,
-                style: const TextStyle(fontWeight: FontWeight.bold))),
-        Center(child: Text(alamat.value.text)),
-        const SizedBox(height: 5),
-        Text('Customer : ${mTransaction.value?.customer ?? "-"}'),
-        const SizedBox(height: 5,),
-        ...listTransactionItem.map((item) => Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("${item.productData.nama} x${item.transactionItemData.qty}"),
-                Text("Rp ${item.transactionItemData.price.toStringAsFixed(0)}"),
-              ],
-            )),
-        const Divider(),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("TOTAL", style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(
-                "Rp ${mTransaction.value?.totalPaid.toStringAsFixed(0) ?? '0'}",
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("Dibayar:"),
-            Text("Rp ${mTransaction.value?.totalPaid.toStringAsFixed(0) ?? '0'}"),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("Kembali:"),
-            Text(
-                "Rp ${mTransaction.value?.totalRefund.toStringAsFixed(0) ?? '0'}"),
-          ],
-        ),
-        const SizedBox(height: 10),
-        const Center(child: Text("Terima kasih")),
-      ],
-    );
+    return Obx(() {
+      final transaction = mTransaction.value;
+      final items = listTransactionItem;
 
-    return Receipt(
-      builder: (context) => _receiptWidget!,
-      onInitialized: (controller) {
-        _receiptController = controller;
-      },
-    );
+      _receiptWidget = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Logo toko / nama toko
+          Center(
+            child: Text(
+              namaToko.value.text.isNotEmpty ? namaToko.value.text : "-",
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ),
+          Center(
+            child: Text(
+              alamat.value.text.isNotEmpty ? alamat.value.text : "-",
+              style: const TextStyle(fontSize: 12),
+            ),
+          ),
+          const SizedBox(height: 8),
+
+          // Customer
+          Row(
+            children: [
+              const Text(
+                "Customer: ",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(width: 4),
+              Text(transaction?.customer ?? "-"),
+            ],
+          ),
+          const SizedBox(height: 8),
+
+          // List transaksi
+          ...items.map((item) => Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 6), // jarak antar item
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "${item.productData.nama} x${item.transactionItemData.qty}",
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                    ),
+                    Text(
+                      "Rp ${item.transactionItemData.price.toStringAsFixed(0)}",
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+              )),
+
+          const Divider(thickness: 1),
+
+          // Total
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text("TOTAL",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                "Rp ${transaction?.totalPaid.toStringAsFixed(0) ?? '0'}",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+
+          // Dibayar
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text("Dibayar:"),
+              Text("Rp ${transaction?.totalPaid.toStringAsFixed(0) ?? '0'}"),
+            ],
+          ),
+          const SizedBox(height: 2),
+
+          // Kembali
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text("Kembali:"),
+              Text("Rp ${transaction?.totalRefund.toStringAsFixed(0) ?? '0'}"),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Footer
+          const Center(
+            child: Text(
+              "Terima kasih",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      );
+
+      return Receipt(
+        builder: (context) => _receiptWidget!,
+        onInitialized: (controller) {
+          _receiptController = controller;
+        },
+      );
+    });
   }
 }

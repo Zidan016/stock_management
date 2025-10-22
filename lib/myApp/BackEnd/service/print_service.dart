@@ -8,7 +8,8 @@ import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 
 class PrintService {
-  Future exportTransactionRange(List<TransactionProductModel> list, DateTime start, DateTime end) async {
+  Future exportTransactionRange(
+      List<TransactionProductModel> list, DateTime start, DateTime end) async {
     final pdf = pw.Document();
 
     pdf.addPage(
@@ -23,7 +24,6 @@ class PrintService {
             pw.Text('Tgl : ${dateFormat(start)} - ${dateFormat(end)}',
                 style:
                     pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
-                    
             pw.SizedBox(height: 20),
             pw.Table.fromTextArray(
               headers: ['Nama Produk', 'Qty', 'Harga', 'Total'],
@@ -72,24 +72,32 @@ class PrintService {
                       fontSize: 12, fontWeight: pw.FontWeight.bold)),
             ),
             pw.Center(
-              child: pw.Text(alamatToko, style: const pw.TextStyle(fontSize: 10)),
+              child:
+                  pw.Text(alamatToko, style: const pw.TextStyle(fontSize: 10)),
             ),
             pw.SizedBox(height: 5),
-            ...items.map(
-              (item) => pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Expanded(
-                    child: pw.Text(
-                        "${item.productData.nama} x${item.transactionItemData.qty}",
-                        style: const pw.TextStyle(fontSize: 10)),
+            pw.Row(children: [
+              pw.Text('Customer:', style: const pw.TextStyle(fontSize: 8)),
+              pw.SizedBox(width: 2),
+              pw.Text(model.customer!, style: const pw.TextStyle(fontSize: 8))
+            ]),
+            pw.SizedBox(height: 10),
+            ...items.map((item) => pw.Padding(
+                  padding: const pw.EdgeInsets.symmetric(vertical: 4),
+                  child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Expanded(
+                        child: pw.Text(
+                            "${item.productData.nama}   x${item.transactionItemData.qty}",
+                            style: const pw.TextStyle(fontSize: 7)),
+                      ),
+                      pw.Text(
+                          "Rp ${item.transactionItemData.price.toStringAsFixed(0)}",
+                          style: const pw.TextStyle(fontSize: 7)),
+                    ],
                   ),
-                  pw.Text(
-                      "Rp ${item.transactionItemData.price.toStringAsFixed(0)}",
-                      style: const pw.TextStyle(fontSize: 10)),
-                ],
-              ),
-            ),
+                )),
             pw.Divider(),
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -129,7 +137,4 @@ class PrintService {
 
     await Printing.layoutPdf(onLayout: (format) async => pdf.save());
   }
-
-  
-  
 }
