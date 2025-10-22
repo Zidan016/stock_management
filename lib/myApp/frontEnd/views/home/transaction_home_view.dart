@@ -20,20 +20,40 @@ class TransactionHomeView extends GetView<TransactionHomeController> {
         label: const Text('Baru'),
         icon: const Icon(Icons.add_box),
       ),
-      body: Obx(()=>  Padding(
-          padding: EdgeInsets.all(16),
+      body: Obx(
+        () => Padding(
+          padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              controller.listPaged.isEmpty
+              Row(
+                children: [
+                  Expanded(
+                    child: Components.myButton('Filter', () {
+                      controller.openFilterSheet();
+                    }),
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  Expanded(
+                      child: Components.myButton('Export to PDF', () {
+                    controller.toPdf();
+                  }))
+                ],
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              controller.listTransaction.isEmpty
                   ? Center(
                       child: Components.textLightMedium('Belum ada transaksi'),
                     )
                   : Expanded(
                       child: ListView.builder(
-                          controller: controller.scrollCOntroller.value,
-                          itemCount: controller.listPaged.length,
+                          controller: controller.scrollController.value,
+                          itemCount: controller.listTransaction.length,
                           itemBuilder: (context, index) {
-                            final data = controller.listPaged[index];
+                            final data = controller.listTransaction[index];
                             return InkWell(
                               onTap: () {
                                 controller.toTransaction(data);
@@ -47,7 +67,7 @@ class TransactionHomeView extends GetView<TransactionHomeController> {
                                 Icons.info_outline,
                               ], [
                                 () {
-                                  
+                                  controller.toDetail(data);
                                 }
                               ]),
                             );

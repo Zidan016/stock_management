@@ -58,7 +58,10 @@ class TransactionController extends GetxController {
 
   Future<bool> onBack() async {
     bool result = false;
-
+    if(mTransaction.value?.isPending == false){
+      result = true;
+      return result;
+    }
     await Get.defaultDialog(
       title: 'Pending Data?',
       content: Column(
@@ -431,6 +434,7 @@ class TransactionController extends GetxController {
       await Future.delayed(const Duration(milliseconds: 500));
       Get.back();
       Components.showInfo('Transaksi Berhasil', 'Selamat Transaksi anda berhasil :)');
+      Get.toNamed('/transaction/detail', arguments: mTransaction.value!);
     }
   }
 }

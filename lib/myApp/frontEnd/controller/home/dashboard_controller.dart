@@ -10,7 +10,7 @@ class DashboardController extends GetxController{
 
   void loadAll()async{
     final data = await transactionRepository.loadAllTransaction();
-    transactionData.assignAll(data); 
+    transactionData.assignAll(data["result"]); 
     final transactionPending = transactionData.where((itm)=> itm.isPending == true);
     countTransactionPending.value = transactionPending.length;
     final transactionDone = transactionData.where((itm)=> itm.isPending == false);
